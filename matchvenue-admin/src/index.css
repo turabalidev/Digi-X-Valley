@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* Custom styles can be added here */
+  body {
+    /* @apply bg-red-800; */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color:yellow;
+    /* overflow-x:hidden; */
+  }
+}
