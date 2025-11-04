@@ -2,12 +2,12 @@
 import React from 'react';
 import { Users, CheckCircle, Diamond, Ban } from 'lucide-react';
 
-const StatsCards = () => {
+const StatsCards = ({ totalUsers = 0, totalActiveUsers = 0, totalPremiumUsers = 0, totalInactiveUsers = 0 }) => {
   const stats = [
-    { label: 'Total Users', value: '2,145', icon: Users, color: 'bg-white', iconBg: 'bg-[#EFF9F8]', iconColor:'text-[#38B2AC]' },
-    { label: 'Verified Users', value: '2,145', icon: CheckCircle, color: 'bg-white', iconBg: 'bg-[#F0FDF4]', iconColor:'text-[#22C55E]' },
-    { label: 'Premium Users', value: '2,145', icon: Diamond, color: 'bg-white', iconBg: 'bg-[#FEFCE8]', iconColor:'text-[#EAB308]' },
-    { label: 'Suspended Users', value: '2,145', icon: Ban, color: 'bg-white', iconBg: 'bg-[#FEF2F2]', iconColor:'text-[#EF4444]' },
+    { label: 'Total Users', value: String(totalUsers), icon: Users, color: 'bg-white', iconBg: 'bg-[#EFF9F8]', iconColor:'text-[#38B2AC]' },
+    { label: 'Active Users', value: String(totalActiveUsers), icon: CheckCircle, color: 'bg-white', iconBg: 'bg-[#F0FDF4]', iconColor:'text-[#22C55E]' },
+    { label: 'Premium Users', value: String(totalPremiumUsers), icon: Diamond, color: 'bg-white', iconBg: 'bg-[#FEFCE8]', iconColor:'text-[#EAB308]' },
+    { label: 'Suspended Users', value: String(totalInactiveUsers), icon: Ban, color: 'bg-white', iconBg: 'bg-[#FEF2F2]', iconColor:'text-[#EF4444]' },
   ];
 
   return (

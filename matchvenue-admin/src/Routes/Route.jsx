@@ -72,7 +72,7 @@ const Router = createBrowserRouter([
   // // Admin Panel
 
   {
-    path: "/",
+    path: "",
     element: (
       //   <ProtectedRoute>
       <Admin />
@@ -80,7 +80,7 @@ const Router = createBrowserRouter([
     ),
     children: [
       {
-        path: "",
+        path: "/",
         element:
           <Dashboard />
       },

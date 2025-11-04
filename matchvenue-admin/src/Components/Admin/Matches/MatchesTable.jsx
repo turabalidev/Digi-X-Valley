@@ -10,7 +10,7 @@ const MatchesTable = ({ matches }) => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              {['Match ID', 'Sender', 'Receiver', 'Stages', 'Actions'].map((h) => (
+              {['Match ID', 'Sender', 'Receiver', 'Stage', 'Actions'].map((h) => (
                 <th
                   key={h}
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -33,8 +33,11 @@ const MatchesTable = ({ matches }) => {
                   <UserCell user={match.receiver} />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {match.stage}
+                  {typeof match?.sender?.current_stage_number === 'number' ? `Stage #${match.sender.current_stage_number}` : (match.stage || '-')}
                 </td>
+                {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {match.created_at ? new Date(match.created_at).toLocaleString() : '-'}
+                </td> */}
                 <td className="px-6 py-4 whitespace-nowrap text-right">
                   <button className="text-gray-400 hover:text-gray-600">
                     <MoreHorizontal className="w-5 h-5" />

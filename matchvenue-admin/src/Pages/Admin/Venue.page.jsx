@@ -2,7 +2,8 @@
 import React from 'react';
 import StatsCards from '../../Components/Admin/Subscription/StatsCards';
 import VenuesTable from '../../Components/Admin/Venue/VenuesTable';
-import Pagination from '../../Components/Admin/Venue/Pagination';
+import Pagination from '../../Components/Admin/Common/Pagination';
+
 
 const Venue = () => {
   const venues = Array.from({ length: 6 }, (_, i) => ({

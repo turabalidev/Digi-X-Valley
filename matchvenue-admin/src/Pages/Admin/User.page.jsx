@@ -1,19 +1,75 @@
 // src/pages/AdminUsers.jsx
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import StatsCards from '../../Components/Admin/User/StatsCards';
 import UsersTable from '../../Components/Admin/User/UsersTable';
-import Pagination from '../../Components/Admin/User/Pagination';
+import Pagination from '../../Components/Admin/Common/Pagination';
+import { Get_Admin_User_Data } from '../../Api/Common/User/AdminUser.api';
 
 const Users = () => {
-  const users = Array.from({ length: 6 }, (_, i) => ({
-    id: `ID: 1`,
-    name: 'Jessica Smith',
-    avatar: `https://i.pravatar.cc/40?img=${i % 2 === 0 ? 1 : 3}`,
-    email: 'jessica.smith@example.com',
-    verified: true,
-    subscription: i % 3 === 0 ? 'Free' : 'Premium',
-    status: i % 4 === 0 ? 'Disabled' : 'Active',
-  }));
+  const [users, setUsers] = useState([]);
+  const [summary, setSummary] = useState({ totalUsers: 0, totalActiveUsers: 0, totalPremiumUsers: 0, totalInactiveUsers: 0 });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(15); // fixed page size per requirement
+  const [verificationFilter, setVerificationFilter] = useState('all'); // all | verified | unverified
+  const [subscriptionFilter, setSubscriptionFilter] = useState('all'); // all | premium | free
+  const [statusFilter, setStatusFilter] = useState('all'); // all | active | disabled
+
+  useEffect(() => {
+    const fetchAdminUserData = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        // Fetch all users; we'll filter and paginate client-side
+        const data = await Get_Admin_User_Data();
+        console.log("Admin User Data::::", data);
+        if (data && data.success) {
+          const apiUsers = Array.isArray(data.data) ? data.data : [];
+          setUsers(apiUsers);
+          const s = data.summary || {};
+          setSummary({
+            totalUsers: s.totalUsers ?? apiUsers.length,
+            totalActiveUsers: s.totalActiveUsers ?? 0,
+            totalPremiumUsers: s.totalPremiumUsers ?? 0,
+            totalInactiveUsers: s.totalInactiveUsers ?? 0,
+          });
+        } else {
+          throw new Error(data?.error || 'Failed to fetch users');
+        }
+      } catch (e) {
+        setError(e.message || 'Unexpected error');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAdminUserData();
+  }, []);
+
+  // Derived: apply filters
+  const filteredUsers = useMemo(() => {
+    const v = verificationFilter;
+    const s = subscriptionFilter;
+    const st = statusFilter;
+    return users.filter((u) => {
+      const isVerified = Boolean(u?.is_email_verified);
+      const plan = (u?.plan_name || 'Free').toLowerCase();
+      const isActive = Boolean(u?.is_active);
+
+      const matchVerification = v === 'all' ? true : v === 'verified' ? isVerified : !isVerified;
+      const matchSubscription = s === 'all' ? true : s === 'premium' ? plan === 'premium' : plan === 'free';
+      const matchStatus = st === 'all' ? true : st === 'active' ? isActive : !isActive;
+
+      return matchVerification && matchSubscription && matchStatus;
+    });
+  }, [users, verificationFilter, subscriptionFilter, statusFilter]);
+
+  // If backend returns all users without pagination, slice client-side for display only
+  const totalItems = filteredUsers.length;
+  const displayedUsers = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredUsers.slice(start, start + itemsPerPage);
+  }, [filteredUsers, currentPage, itemsPerPage]);
 
   return (
     <div className="min-h-screen bg-[#FFF1EA] px-4 sm:px-6 lg:px-8 py-6">
@@ -34,33 +90,62 @@ const Users = () => {
       </div>
 
       {/* Stats Cards */}
-      <StatsCards />
+      <StatsCards
+        totalUsers={summary.totalUsers}
+        totalActiveUsers={summary.totalActiveUsers}
+        totalPremiumUsers={summary.totalPremiumUsers}
+        totalInactiveUsers={summary.totalInactiveUsers}
+      />
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-6">
-        <select className="px-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-purple-500">
-          <option>Verification Status</option>
-          <option>Verified</option>
-          <option>Unverified</option>
+        <select
+          className="px-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-purple-500"
+          value={verificationFilter}
+          onChange={(e) => { setVerificationFilter(e.target.value); setCurrentPage(1); }}
+        >
+          <option value="all">Verification Status</option>
+          <option value="verified">Verified</option>
+          <option value="unverified">Unverified</option>
         </select>
-        <select className="px-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-purple-500">
-          <option>Subscription</option>
-          <option>Premium</option>
-          <option>Free</option>
+        <select
+          className="px-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-purple-500"
+          value={subscriptionFilter}
+          onChange={(e) => { setSubscriptionFilter(e.target.value); setCurrentPage(1); }}
+        >
+          <option value="all">Subscription</option>
+          <option value="premium">Premium</option>
+          <option value="free">Free</option>
         </select>
-        <select className="px-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-purple-500">
-          <option>Status</option>
-          <option>Active</option>
-          <option>Disabled</option>
+        <select
+          className="px-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-purple-500"
+          value={statusFilter}
+          onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+        >
+          <option value="all">Status</option>
+          <option value="active">Active</option>
+          <option value="disabled">Disabled</option>
         </select>
       </div>
 
       {/* Users Table */}
-      <UsersTable users={users} />
+      {error && (
+        <div className="mb-4 p-3 rounded-md bg-red-50 text-red-700 text-sm">{error}</div>
+      )}
+      {loading ? (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-gray-500 text-sm">Loading users...</div>
+      ) : (
+        <UsersTable users={displayedUsers} />
+      )}
 
       {/* Pagination */}
       <div className="mt-6">
-        <Pagination currentPage={1} totalPages={10} totalItems={60} itemsPerPage={6} />
+        <Pagination
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          totalItems={totalItems}
+          onPageChange={(p) => setCurrentPage(p)}
+        />
       </div>
     </div>
   );

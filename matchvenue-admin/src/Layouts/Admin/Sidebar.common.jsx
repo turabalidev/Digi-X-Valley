@@ -12,7 +12,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import Logo from "/Common/image.png";
+import Logo from "/Common/Logo.png";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);

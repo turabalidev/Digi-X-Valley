@@ -1,9 +1,14 @@
 import { PieChart as RePieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
-const PieChart = () => {
-  const data = [
-    { name: "Free", value: 68 },
-    { name: "Premium", value: 32 },
+const PieChart = ({ subscriptions }) => {
+  console.log("Subscriptions Data:", subscriptions);
+  
+  const data = subscriptions ? [
+    { name: "Free", value: subscriptions.percentFree || 0 },
+    { name: "Premium", value: subscriptions.percentPremium || 0 },
+  ] : [
+    { name: "Free", value: 0 },
+    { name: "Premium", value: 0 },
   ];
   const COLORS = ["#E9D8FD", "#7622BF"];
 

@@ -37,35 +37,47 @@ const UsersTable = ({ users }) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {users.map((user, i) => (
+            {users.map((user, i) => {
+              const name = user.name || '-';
+              const id = user.id || user._id || '-';
+              const email = user.email || '-';
+              const isVerified = Boolean(user.is_email_verified);
+              const subscription = user.plan_name || 'Free';
+              const status = user.is_active ? 'Active' : 'Disabled';
+              const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&size=40`;
+              return (
               <tr key={i} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center gap-3">
                     <img
-                      src={user.avatar}
-                      alt={user.name}
+                      src={avatar}
+                      alt={name}
                       className="w-10 h-10 rounded-full border border-gray-200"
                     />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                      <p className="text-xs text-gray-500">{user.id}</p>
+                      <p className="text-sm font-medium text-gray-900">{name}</p>
+                      <p className="text-xs text-gray-500">{id}</p>
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {user.email}
+                  {email}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <Badge type="verified">Verified</Badge>
+                  {isVerified ? (
+                    <Badge type="verified">Verified</Badge>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Unverified</span>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <Badge type={user.subscription.toLowerCase()}>
-                    {user.subscription}
+                  <Badge type={(subscription || 'Free').toLowerCase()}>
+                    {subscription}
                   </Badge>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <Badge type={user.status.toLowerCase()}>
-                    {user.status}
+                  <Badge type={status.toLowerCase()}>
+                    {status}
                   </Badge>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">
@@ -74,7 +86,8 @@ const UsersTable = ({ users }) => {
                   </button>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>

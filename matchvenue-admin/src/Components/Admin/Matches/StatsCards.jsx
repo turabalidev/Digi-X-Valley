@@ -1,12 +1,12 @@
 // src/components/admin/matches/StatsCards.jsx
 import React from 'react';
-import { Heart, CheckCircle, MessageSquare,Ban } from 'lucide-react';
+import { Heart, CheckCircle, Ban } from 'lucide-react';
 
-const StatsCards = () => {
+const StatsCards = ({ totalMatches = 0, activeChats = 0, disabledChats = 0 }) => {
   const stats = [
-    {iconColor:'text-[#38B2AC]',iconBg: 'bg-[#EFF9F8]', label: 'Total Matches', value: '2,145', icon: Heart, color: 'bg-pink-100' },
-    {iconColor:'text-[#22C55E]',iconBg: 'bg-[#F0FDF4]', label: 'Active Chats', value: '2,145', icon: CheckCircle, color: 'bg-green-100' },
-    {iconColor:'text-[#EF4444]',iconBg: 'bg-[#FEF2F2]', label: 'Suspended Users', value: '2,145', icon: Ban, color: 'bg-red-100' },
+    {iconColor:'text-[#38B2AC]',iconBg: 'bg-[#EFF9F8]', label: 'Total Matches', value: String(totalMatches), icon: Heart, color: 'bg-pink-100' },
+    {iconColor:'text-[#22C55E]',iconBg: 'bg-[#F0FDF4]', label: 'Active Chats', value: String(activeChats), icon: CheckCircle, color: 'bg-green-100' },
+    {iconColor:'text-[#EF4444]',iconBg: 'bg-[#FEF2F2]', label: 'Disabled Chats', value: String(disabledChats), icon: Ban, color: 'bg-red-100' },
 
   ];
 

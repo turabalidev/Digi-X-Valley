@@ -1,14 +1,24 @@
 import { LineChart as ReLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-const LineChart = () => {
-  const data = [
-    { day: "Mon", users: 7000 },
-    { day: "Tue", users: 8000 },
-    { day: "Wed", users: 9500 },
-    { day: "Thu", users: 11000 },
-    { day: "Fri", users: 12500 },
-    { day: "Sat", users: 13000 },
-    { day: "Sun", users: 11800 },
+const LineChart = ({ dailyActiveUsers }) => {
+  // console.log("Daily Active Users Data:", dailyActiveUsers);
+  // Transform API data to chart format
+  const data = dailyActiveUsers ? [
+    { day: "Mon", users: dailyActiveUsers?.Monday || 0 },
+    { day: "Tue", users: dailyActiveUsers?.Tuesday || 0 },
+    { day: "Wed", users: dailyActiveUsers?.Wednesday || 0 },
+    { day: "Thu", users: dailyActiveUsers?.Thursday || 0 },
+    { day: "Fri", users: dailyActiveUsers?.Friday || 0 },
+    { day: "Sat", users: dailyActiveUsers?.Saturday || 0 },
+    { day: "Sun", users: dailyActiveUsers?.Sunday || 0 },
+  ] : [
+    { day: "Mon", users: 0 },
+    { day: "Tue", users: 0 },
+    { day: "Wed", users: 0 },
+    { day: "Thu", users: 0 },
+    { day: "Fri", users: 0 },
+    { day: "Sat", users: 0 },
+    { day: "Sun", users: 0 },
   ];
 
   return (
